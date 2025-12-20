@@ -68,8 +68,10 @@
   let dpr=1, view={x:40,y:40,s:1};
   let pointerMap=new Map(), isPanning=false, panStart=null;
 
-  let setPhase("need_roll"); // need_roll | need_move | placing_barricade | game_over
-  let legalTargets=[], setPlacingChoices([]);
+let phase = "need_roll"; // need_roll | need_move | placing_barricade | game_over
+let legalTargets = [];
+let placingChoices = [];
+
 
   function setPhase(p){
     phase = p;
