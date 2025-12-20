@@ -25,7 +25,7 @@
         <section class="card">
           <h3>Online</h3>
           <div class="row"><label>Name</label><input id="name" value="chris"></div>
-          <div class="row" style="display:none"><label>Server</label><input id="server" value="wss://barikade-server.onrender.com/ws" readonly></div>
+          <div class="row"><label>Server</label><input id="server" value="wss://barikade-online.onrender.com/ws"></div>
           <div class="row"><label>Raum</label><input id="room" value="10"></div>
           <div class="row"><label>Spieler</label>
             <select id="maxPlayers">
@@ -38,6 +38,7 @@
             <button id="btnHost" class="btn primary">Host</button>
             <button id="btnJoin" class="btn">Join</button>
             <button id="btnLeave" class="btn ghost" disabled>Leave</button>
+            <button id="btnStart" class="btn success" disabled>Start</button>
           </div>
           <div class="small" id="connText">Offline</div>
         </section>
