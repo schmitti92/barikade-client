@@ -13,6 +13,7 @@
     btnHost: $("btnHost"),
     btnJoin: $("btnJoin"),
     btnLeave: $("btnLeave"),
+    btnStart: $("btnStart"),
     btnSkip: $("btnSkip"),
     centerHint: $("centerHint"),
   };
@@ -22,9 +23,6 @@
   const LS_SERVER = "barikade_server_v1";
   const LS_NAME = "barikade_name_v1";
 
-
-  // Fest hinterlegter Server (kein Tippen nötig)
-  const FIXED_SERVER_URL = "wss://barikade-server.onrender.com/ws";
   let clientId = localStorage.getItem(LS_KEY);
   if(!clientId){
     clientId = (crypto?.randomUUID ? crypto.randomUUID() : (Math.random().toString(16).slice(2)+Date.now().toString(16)));
@@ -32,10 +30,8 @@
   }
 
   if(localStorage.getItem(LS_NAME)) ui.name.value = localStorage.getItem(LS_NAME);
-    // Server immer fest setzen
-  ui.server.value = FIXED_SERVER_URL;
-  localStorage.setItem(LS_SERVER, FIXED_SERVER_URL);
-if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
+  if(localStorage.getItem(LS_SERVER)) ui.server.value = localStorage.getItem(LS_SERVER);
+  if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
 
   let ws = null;
   let joined = false;
@@ -43,6 +39,8 @@ if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
   let reconnectTimer = null;
   let reconnectBackoff = 1000;
   let lastRoomState = null;
+  let gameStarted = false;
+
 
   function setConn(state, extra=""){
     const map = {
@@ -71,7 +69,12 @@ if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
     ui.playersList.innerHTML = "";
     const header = document.createElement("div");
     const playerCount = players.filter(p=>p.role==="player").length;
-    header.className = "small";
+    
+    // Start-Button nur für Host, nur wenn Spieleranzahl passt
+    const selectedMax = parseInt(ui.maxPlayers.value||"2",10);
+    const amHost = !!(room.me && room.me.isHost);
+    ui.btnStart.disabled = !(joined && amHost && playerCount === selectedMax && !gameStarted);
+header.className = "small";
     header.textContent = `🟢 Spieler im Raum (${playerCount}/${room.maxPlayers || "?"})`;
     ui.playersList.appendChild(header);
 
@@ -119,7 +122,7 @@ if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
   }
 
   function connectAndHello(auto=false){
-    const url = FIXED_SERVER_URL;
+    const url = ui.server.value.trim();
     const room = ui.room.value.trim();
     const name = ui.name.value.trim() || "Spieler";
     const maxPlayers = parseInt(ui.maxPlayers.value,10) || 2;
@@ -173,7 +176,16 @@ if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
         return;
       }
 
-      if(msg.type === "room_state"){
+      
+    if(msg.type === "event" && msg.event && msg.event.type === "start"){
+      gameStarted = true;
+      ui.btnStart.disabled = true;
+      const hint = document.getElementById("centerHint");
+      if(hint) hint.textContent = "Spiel gestartet – Spielbrett/Logik kommt als nächster Schritt.";
+      return;
+    }
+
+if(msg.type === "room_state"){
         lastRoomState = msg.room;
         renderPlayers(lastRoomState);
         return;
@@ -205,6 +217,25 @@ if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
   ui.btnHost.onclick = () => { wantRole="player"; connectAndHello(false); };
   ui.btnJoin.onclick = () => { wantRole="player"; connectAndHello(false); };
   ui.btnLeave.onclick = () => leave();
+
+  ui.btnStart.onclick = () => {
+    if(!ws || ws.readyState !== 1 || !joined) return;
+    if(!lastRoomState || !lastRoomState.me || !lastRoomState.me.isHost) return;
+    const selectedMax = parseInt(ui.maxPlayers.value||"2",10);
+    const playerCount = (lastRoomState.players||[]).filter(p=>p.role==="player").length;
+    if(playerCount !== selectedMax) return;
+
+    gameStarted = true;
+    ui.btnStart.disabled = true;
+
+    const hint = document.getElementById("centerHint");
+    if(hint) hint.textContent = "Spiel gestartet – Spielbrett/Logik kommt als nächster Schritt.";
+
+    try{
+      ws.send(JSON.stringify({ type:"start" }));
+    }catch(e){}
+  };
+
 
   ui.btnSkip.onclick = () => {
     if(ws && ws.readyState===1){
