@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Barikade – Online</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">Barikade <span class="sub">Phase 2 · online · Render WS · tablet-friendly</span></div>
+      <div class="statuspill" id="connPill">● Offline</div>
+      <div class="topbuttons">
+        <button id="btnSkip" class="btn">Runde aussetzen</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="board" id="board">
+        <div class="hint" id="centerHint">Online: Host oder Join</div>
+      </div>
+
+      <aside class="panel">
+        <section class="card">
+          <h3>Online</h3>
+          <div class="row"><label>Name</label><input id="name" value="chris"></div>
+          <div class="row" style="display:none"><label>Server</label><input id="server" value="wss://barikade-server.onrender.com/ws" readonly></div>
+          <div class="row"><label>Raum</label><input id="room" value="10"></div>
+          <div class="row"><label>Spieler</label>
+            <select id="maxPlayers">
+              <option value="2" selected>2 Spieler</option>
+              <option value="3">3 Spieler</option>
+              <option value="4">4 Spieler</option>
+            </select>
+          </div>
+          <div class="buttons">
+            <button id="btnHost" class="btn primary">Host</button>
+            <button id="btnJoin" class="btn">Join</button>
+            <button id="btnLeave" class="btn ghost" disabled>Leave</button>
+          </div>
+          <div class="small" id="connText">Offline</div>
+        </section>
+
+        <section class="card">
+          <h3>Spieler im Raum</h3>
+          <div id="playersList" class="players">—</div>
+        </section>
+
+        <section class="card">
+          <h3>Reconnect</h3>
+          <div class="small" id="reconnInfo">Auto-Reconnect aktiv.</div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+<script src="game.js"></script>
+</body>
+</html>
