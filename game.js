@@ -282,7 +282,7 @@ if(localStorage.getItem(LS_ROOM)) ui.room.value = localStorage.getItem(LS_ROOM);
       }));
     };
 
-    ws.onmessage = (ev) => {
+  ws.onmessage = async (ev) => {
       let msg;
       try{ msg = JSON.parse(ev.data); }catch(e){ return; }
 
