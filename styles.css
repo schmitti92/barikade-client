@@ -29,3 +29,7 @@ input,select{width:100%;padding:10px 10px;background:rgba(0,0,0,.25);border:1px 
 .badge{font-size:11px;color:var(--muted)}
 .turn{color:var(--accent)}
 @media (max-width:980px){.main{grid-template-columns:1fr;}.panel{order:-1}}
+
+
+.btn.success{ border-color: rgba(120,255,120,.35); background: rgba(120,255,120,.12); }
+.btn.success:hover{ background: rgba(120,255,120,.18); }
