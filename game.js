@@ -1,4 +1,4 @@
-(() => {
+v(() => {
   const $ = (id) => document.getElementById(id);
 
   // ===== UI refs =====
@@ -235,19 +235,21 @@
         setNetPlayers(msg.players || msg.list || msg.payload || []);
         return;
       }
-      if(type==="room" || type==="joined"){
-        if(msg.room) roomCode = normalizeRoomCode(msg.room);
-        if(roomCodeInp) roomCodeInp.value = roomCode;
-        if(msg.players) setNetPlayers(msg.players);
-        setNetStatus("Verbunden", true);
-        return;
-     if(type==="snapshot" || type==="state" || type==="sync"){
-  // snapshot kommt als msg.snapshot, state als msg.state
+if(type==="room" || type==="joined"){
+  if(msg.room) roomCode = normalizeRoomCode(msg.room);
+  if(roomCodeInp) roomCodeInp.value = roomCode;
+  if(msg.players) setNetPlayers(msg.players);
+  setNetStatus("Verbunden", true);
+  return;
+}
+  
+if(type==="snapshot" || type==="state" || type==="sync"){
   const st = msg.state || msg.snapshot || msg.payload || msg.data;
   if(st) applyRemoteState(st);
   if(msg.players) setNetPlayers(msg.players);
   return;
 }
+
       if(type==="intent"){
         if(netMode!=="host") return;
         const it = msg.intent || msg.payload || msg.data || msg;
