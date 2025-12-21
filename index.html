@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Barikade Online – Minimal King</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🧱</div>
+        <div>
+          <div class="title">Barikade Online</div>
+          <div class="subtitle">Minimal‑King (idiotensicher)</div>
+        </div>
+      </div>
+
+      <div class="statusline">
+        <span id="connPill" class="pill">offline</span>
+        <span id="roomPill" class="pill ghost">Room: –</span>
+        <span id="turnPill" class="pill ghost">Zug: –</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Lobby</h2>
+
+        <div class="row">
+          <button id="hostBtn" class="btn">Host starten</button>
+          <input id="roomInput" class="input" placeholder="Raumcode" maxlength="6" />
+          <button id="joinBtn" class="btn">Beitreten</button>
+        </div>
+
+        <div class="row">
+          <div class="hint">1) Raum erstellen/beitreten → 2) Farbe wählen → (Host) Start</div>
+        </div>
+
+        <div class="colors" id="colorRow"></div>
+
+        <div class="row split">
+          <div>
+            <div class="kv"><span>Deine Farbe:</span> <b id="myColor">–</b></div>
+            <div class="kv"><span>Rolle:</span> <b id="myRole">–</b></div>
+          </div>
+          <div class="right">
+            <button id="startBtn" class="btn primary hidden">Spiel starten</button>
+            <button id="resetBtn" class="btn danger hidden">Reset → Lobby</button>
+          </div>
+        </div>
+
+        <div id="hostTools" class="hosttools hidden">
+          <h3>Host‑Tools</h3>
+          <div class="row">
+            <button id="editEdgesBtn" class="btn">Verbindungen bearbeiten</button>
+            <button id="editBarrBtn" class="btn">Barikaden setzen</button>
+            <button id="editOffBtn" class="btn">Bearbeiten AUS</button>
+          </div>
+
+          <div class="row">
+            <button id="exportBtn" class="btn">Export JSON</button>
+            <button id="importBtn" class="btn">Import JSON</button>
+            <button id="saveLocalBtn" class="btn">Speichern (Local)</button>
+            <button id="loadLocalBtn" class="btn">Laden (Local)</button>
+          </div>
+
+          <textarea id="jsonBox" class="textarea" placeholder="Hier JSON rein / raus (Export/Import)"></textarea>
+          <div class="hint small">
+            Tipp: Für deine 2 fehlenden Verbindungen → Modus „Verbindungen bearbeiten“ → je Verbindung: Feld A klicken, dann Feld B klicken.
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Spiel</h2>
+        <div class="row split">
+          <div class="kv"><span>Phase:</span> <b id="phaseText">–</b></div>
+          <div class="right">
+            <button id="rollBtn" class="btn primary" disabled>Würfeln</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="dice">
+            <div class="diceBox" id="diceBox">–</div>
+            <div class="diceText">
+              <div><b id="diceHint">Warte auf Start…</b></div>
+              <div class="small" id="actionHint">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="boardWrap">
+          <svg id="board" viewBox="0 0 1000 800" class="board"></svg>
+        </div>
+
+        <div class="hint small">
+          Regeln: Server würfelt. Pro Zug: 1 Wurf → 1 Bewegung. Wenn du auf eine Barikade ziehst: aufnehmen → sofort neu platzieren.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
