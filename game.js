@@ -241,13 +241,13 @@
         if(msg.players) setNetPlayers(msg.players);
         setNetStatus("Verbunden", true);
         return;
-      }
-      if(type==="snapshot" || type==="state" || type==="sync"){
-        const st = msg.state || msg.snapshot || msg.payload || msg.data;
-        if(st) applyRemoteState(st);
-        if(msg.players) setNetPlayers(msg.players);
-        return;
-      }
+     if(type==="snapshot" || type==="state" || type==="sync"){
+  // snapshot kommt als msg.snapshot, state als msg.state
+  const st = msg.state || msg.snapshot || msg.payload || msg.data;
+  if(st) applyRemoteState(st);
+  if(msg.players) setNetPlayers(msg.players);
+  return;
+}
       if(type==="intent"){
         if(netMode!=="host") return;
         const it = msg.intent || msg.payload || msg.data || msg;
@@ -325,8 +325,9 @@
     if(st.barricades && Array.isArray(st.barricades)) st.barricades = new Set(st.barricades);
     state = st;
 
-    // Backward compat: older snapshots had no global gamePhase
-    if(typeof state.gamePhase !== "string") state.gamePhase = "running";
+// Backward compat: older snapshots had no global gamePhase
+if(typeof state.gamePhase !== "string") state.gamePhase = "lobby";
+
 
     if(st.players && Array.isArray(st.players) && st.players.length>=2) setPlayers(st.players);
 
@@ -365,15 +366,16 @@
     return st;
   }
 
-  function broadcastState(kind="state"){
-    if(netMode!=="host") return;
-    const payload = serializeState();
-    if(kind==="snapshot"){
-      wsSend({type:"snapshot", room:roomCode, snapshot:payload, ts:Date.now()});
-    }else{
-      wsSend({type:"state", room:roomCode, state:payload, ts:Date.now()});
-    }
+function broadcastState(kind="state"){
+  if(netMode!=="host") return;
+  const payload = serializeState();
+  if(kind === "snapshot"){
+    wsSend({type:"snapshot", room:roomCode, snapshot: payload, ts:Date.now()});
+  }else{
+    wsSend({type:"state", room:roomCode, state: payload, ts:Date.now()});
   }
+}
+
 
   function sendIntent(intent){
     const msg = {type:"intent", room:roomCode, clientId, intent, ts:Date.now()};
