@@ -1,4 +1,5 @@
 const DEFAULT_WSS = "wss://barikade-server.onrender.com";
+
 const LOCAL_WS = "ws://localhost:10000";
 
 const $ = (id) => document.getElementById(id);
