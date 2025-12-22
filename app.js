@@ -93,7 +93,7 @@ const STATE = {
   net: {
     enabled: true,
     ws: null,
-    https://schmitti92.github.io/barikade-client/
+url: "wss://barikade-server.onrender.com",
     room: "",
     name: "",
     clientId: null,
