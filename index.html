@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Barikade – Phase 3 (Online)</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🛡️</div>
+      <div>
+        <div class="title">Barikade – Phase 1</div>
+        <div class="subtitle">Online • stabil • Board aus <code>board.json</code></div>
+        <div class="playersBox">
+          <div class="playersTitle">Debug</div>
+          <div id="netDebug" class="netDebug mono">–</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="btnNew" class="btn">Neues Spiel</button>
+      <button id="btnRoll" class="btn primary">Würfeln</button>
+
+      <div class="diceWrap" aria-label="Würfelanzeige">
+        <div id="dice" class="dice dice2d" title="Würfelwert" data-value="0" aria-label="Würfel">
+          <span class="pip p1" aria-hidden="true"></span>
+          <span class="pip p2" aria-hidden="true"></span>
+          <span class="pip p3" aria-hidden="true"></span>
+          <span class="pip p4" aria-hidden="true"></span>
+          <span class="pip p5" aria-hidden="true"></span>
+          <span class="pip p6" aria-hidden="true"></span>
+          <span class="pip p7" aria-hidden="true"></span>
+          <span class="pip p8" aria-hidden="true"></span>
+          <span class="pip p9" aria-hidden="true"></span>
+        </div>
+        <div class="diceLabel">
+          <div id="turnLabel" class="turnLabel">Spieler: <span class="pill red">Rot</span></div>
+          <div id="hint" class="hint">Würfle, dann klicke eine rote Figur (Haus oder Brett).</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="stage">
+      <canvas id="boardCanvas"></canvas>
+      <div class="legend">
+        <div class="legendRow"><span class="dot goal"></span> Ziel</div>
+        <div class="legendRow"><span class="dot run"></span> Lauf-Feld (Flag <code>run</code>)</div>
+        <div class="legendRow"><span class="dot nobar"></span> Kein-Barikade (Flag <code>noBarricade</code>)</div>
+        <div class="legendRow"><span class="dot house"></span> Häuser</div>
+        <div class="legendRow"><span class="dot piece"></span> Figur (Rot)</div>
+      </div>
+    </div>
+
+    <aside class="side">
+
+      <h2>Online</h2>
+      <div class="panel">
+        <div class="row"><div class="k">Server</div><div class="v mono" id="serverLabel">wss://DEIN-SERVER.onrender.com</div></div>
+        <div class="row"><div class="k">Raum</div><div class="v">
+          <input id="roomCode" class="input" maxlength="12" placeholder="z.B. ABC123" />
+        </div></div>
+        <div class="row"><div class="k">Name</div><div class="v">
+          <input id="playerName" class="input" maxlength="16" placeholder="Christoph" />
+        </div></div>
+
+        <div class="btnRow">
+          <button id="btnHost" class="btn">Host</button>
+          <button id="btnJoin" class="btn primary">Beitreten</button>
+          <button id="btnLeave" class="btn disabled" disabled>Verlassen</button>
+        </div>
+
+        <div class="btnRow">
+          <button id="btnStart" class="btn primary disabled" disabled>Spiel starten</button>
+        </div>
+
+        <div class="small" id="netHint">Noch nicht verbunden.</div>
+
+        <div class="btnRow">
+          <button id="btnCopyDiag" class="btn">Debug kopieren</button>
+          <button id="btnClearLog" class="btn">Log leeren</button>
+        </div>
+
+        <div class="playersBox">
+          <div class="playersTitle">Event-Log</div>
+          <div id="netLog" class="netLog mono">–</div>
+        </div>
+
+
+        <div class="playersBox">
+          <div class="playersTitle">Spieler</div>
+          <div id="playersList" class="playersList">–</div>
+        </div>
+      </div>
+
+      <h2>Status</h2>
+      <div class="panel">
+        <div class="row"><div class="k">Board</div><div class="v" id="boardStats">lädt…</div></div>
+        <div class="row"><div class="k">Wurf</div><div class="v" id="rollStats">–</div></div>
+        <div class="row"><div class="k">Aktion</div><div class="v" id="actionStats">–</div></div>
+      </div>
+
+      <h2>So funktioniert’s</h2>
+      <ol class="howto">
+        <li><b>Würfeln</b></li>
+        <li>Dann <b>eine rote Figur</b> anklicken</li>
+        <li>Danach wird angezeigt, <b>wohin</b> sie in genau so vielen Schritten gehen kann</li>
+        <li>Ein Ziel-Feld anklicken → Figur bewegt sich <b>sichtbar Feld für Feld</b></li>
+      </ol>
+
+      <details class="details">
+        <summary>Regeln (Phase 3 Online)</summary>
+        <ul>
+          <li>2 Spieler (Rot/Blau) online</li>
+          <li>Aus dem Haus raus: <b>mit jeder Zahl</b> möglich (Start zählt als 1 Schritt)</li>
+          <li>Barikaden aktiv • Kein Schlagen (kommt später) • Online-Sync</li>
+        </ul>
+      </details>
+
+      <details class="details">
+        <summary>Lokales Starten</summary>
+        <div class="mono">
+          Öffne <b>index.html</b> per Doppelklick (oder per lokalen Server).<br/>
+          Alles läuft offline.
+        </div>
+      </details>
+    </aside>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+
+  <!-- Floating dice overlay (shown only while rolling; keeps header layout stable) -->
+  <div id="diceOverlay" class="diceOverlay" aria-hidden="true">
+    <div id="diceFloat" class="dice dice2d diceFloat" data-value="0" aria-label="Würfel (Overlay)">
+          <span class="pip p1" aria-hidden="true"></span>
+          <span class="pip p2" aria-hidden="true"></span>
+          <span class="pip p3" aria-hidden="true"></span>
+          <span class="pip p4" aria-hidden="true"></span>
+          <span class="pip p5" aria-hidden="true"></span>
+          <span class="pip p6" aria-hidden="true"></span>
+          <span class="pip p7" aria-hidden="true"></span>
+          <span class="pip p8" aria-hidden="true"></span>
+          <span class="pip p9" aria-hidden="true"></span>
+    </div>
+  </div>
+
+</body>
+</html>
